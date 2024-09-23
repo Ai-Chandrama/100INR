@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            margin-top: 4px;
+        }
+        label11{
+            margin-top: 4px;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .copy-btn {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .copy-btn {
+            background-color: #007bff;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        button:hover, .copy-btn:hover {
+            opacity: 0.9;
+        }
+        .SignInForm{
+            text-align: center;
+            color: #4CAF50;
+        }
+        .upiid{margin-top: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid gray;
+            padding: 10px 0 10px 0;
+            border-radius: 5px;
+        }
+        .upiid span{
+            padding-right: 15px;
+            margin-top: 5px;
+            cursor: pointer;
+            color: green;
+        }
+        .upiid label{
+            padding-left: 25px;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        .upiid .copy{
+            color: green;
+            font-size: 20px;
+        }
+        .center{
+            padding: 10px 15px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            margin-left: 38%;
+        }
+        .center:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+        .QR{
+            border: 1px solid gray;
+            border-radius: 5px;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 15px;
+        }
+        .QR span{
+            font-size: 12px;
+            padding: 0 10px;
+        }
+        .QR img{
+            width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<form id="paymentForm">
+    <h2 class="SignInForm">Sign In Form</h2>
+    
+    <label for="fullName">Full Name:</label>
+    <input type="text" id="fullName" name="fullName" required>
+
+    <label for="mobileNo">Mobile No (10-digit):</label>
+    <input type="text" id="mobileNo" name="mobileNo" maxlength="10" pattern="\d{10}" title="Enter a valid 10-digit mobile number" required>
+
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" value="100" readonly>
+    <div class="QR">
+        <span>Take a Screenshot and make Payment via UPI.</span>
+        <img src="QR.png" alt="">
+        
+        <span>Fill the UTR number, Upload the photo of Payment and then Sign In</span>
+    </div>
+
+    <div class="upiid" onclick="copyText()">
+        <label for="upiId">UPI ID:</label>
+        <span id="upiText">mrchandramapatel@ybl</span>
+        <span class="copy"><i class="fa-solid fa-copy"></i></span>
+    </div>
+
+    <input type="text" id="hiddenInput" value="mrchandramapatel@ybl" style="position: absolute; top: -9999px;">
+
+    <label for="utrNo" class="label11">Fill UTR No (12-digit):</label>
+    <input type="text" id="utrNo" class="label11" name="utrNo" maxlength="12" pattern="\d{12}" title="Enter a valid 12-digit UTR number" required>
+
+    <label for="paymentImg" class="label11">Upload Payment Image:</label>
+    <input type="file" id="paymentImg" class="label11" name="paymentImg" accept="image/*" required>
+
+    <button type="submit" class="center" id="submitBtn" disabled><a href="100.html" target="_blank" style="text-decoration: none; color: white;">Sign In</a></button>
+</form>
+
+<script>
+    // Function to copy the UPI text to the clipboard with fallback for mobile/tablet devices
+    function copyText() {
+        const textToCopy = document.getElementById("upiText").innerText;
+        const hiddenInput = document.getElementById("hiddenInput");
+
+        // Attempt to use modern clipboard API
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(function() {
+                alert("UPI ID copied to clipboard: " + textToCopy);
+            }).catch(function() {
+                alert("Failed to copy UPI ID.");
+            });
+        } else {
+            // Fallback for older browsers and mobile devices
+            hiddenInput.value = textToCopy;
+            hiddenInput.select();
+            hiddenInput.setSelectionRange(0, 99999); // For mobile devices
+            try {
+                document.execCommand('copy');
+                alert("UPI ID copied to clipboard: " + textToCopy);
+            } catch (err) {
+                alert("Failed to copy UPI ID.");
+            }
+        }
+    }
+
+    // Form validation
+    document.getElementById("paymentForm").addEventListener("submit", function(event) {
+        const mobileNo = document.getElementById("mobileNo").value;
+        const utrNo = document.getElementById("utrNo").value;
+
+        if (!/^\d{10}$/.test(mobileNo)) {
+            alert("Please enter a valid 10-digit mobile number.");
+            event.preventDefault();
+        }
+
+        if (!/^\d{12}$/.test(utrNo)) {
+            alert("Please enter a valid 12-digit UTR number.");
+            event.preventDefault();
+        }
+    });
+
+    // Enable the submit button only when all fields are filled correctly
+    const fullName = document.getElementById('fullName');
+    const mobileNo = document.getElementById('mobileNo');
+    const utrNo = document.getElementById('utrNo');
+    const paymentImg = document.getElementById('paymentImg');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function checkForm() {
+        if (
+            fullName.value.trim() !== '' &&
+            /^\d{10}$/.test(mobileNo.value) &&
+            /^\d{12}$/.test(utrNo.value) &&
+            paymentImg.files.length > 0
+        ) {
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.disabled = true;
+        }
+    }
+
+    // Add event listeners to check the form inputs
+    fullName.addEventListener('input', checkForm);
+    mobileNo.addEventListener('input', checkForm);
+    utrNo.addEventListener('input', checkForm);
+    paymentImg.addEventListener('change', checkForm);
+
+</script>
+
+</body>
+</html>
